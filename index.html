@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hüseyin'i Patakla Deluxe: Stardew & Arcade Edition 🥊</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      image-rendering: pixelated;
+    }
+    body {
+      background-color: #2b1b17;
+      background-image: 
+        radial-gradient(#4a2e26 15%, transparent 16%),
+        radial-gradient(#4a2e26 15%, transparent 16%);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      font-family: 'VT323', monospace;
+      color: #5c2c16;
+      overflow-x: hidden;
+    }
+
+    .arcade-box {
+      background: #fed391;
+      border: 6px solid #b8531e;
+      border-radius: 16px;
+      box-shadow: 
+        inset 0 0 0 4px #e59952,
+        0 14px 35px rgba(0,0,0,0.65);
+      max-width: 440px;
+      width: 100%;
+      padding: 20px 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    .top-badge {
+      background: #b8531e;
+      color: #fff4d4;
+      display: inline-block;
+      padding: 3px 14px;
+      border-radius: 6px;
+      font-size: 16px;
+      letter-spacing: 1px;
+      border: 2px solid #5c2c16;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 27px;
+      color: #8c2e0b;
+      margin-bottom: 4px;
+      text-shadow: 1px 1px 0 #fed391;
+    }
+    .subtitle {
+      font-size: 17px;
+      color: #7a3e1d;
+      margin-bottom: 12px;
+    }
+
+    /* HUD */
+    .hud-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      background: #f7bc74;
+      border: 3px solid #b8531e;
+      border-radius: 8px;
+      padding: 8px 6px;
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: #4a210f;
+    }
+    .hud-val {
+      font-weight: bold;
+      color: #b8531e;
+    }
+
+    /* HP Bar */
+    .hp-container {
+      margin-bottom: 14px;
+      text-align: left;
+    }
+    .hp-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      margin-bottom: 3px;
+      color: #5c2c16;
+      font-weight: bold;
+    }
+    .hp-track {
+      width: 100%;
+      height: 18px;
+      background: #d48b4b;
+      border: 2px solid #5c2c16;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .hp-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #e74c3c, #2ecc71);
+      transition: width 0.15s ease-out;
+    }
+
+    /* Vurma Alanı ve Kusursuz Portre Odaklama */
+    .stage {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 12px auto;
+      background: #fff4d4;
+      border: 5px solid #b8531e;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        inset 0 0 20px rgba(184, 83, 30, 0.35),
+        0 6px 14px rgba(0,0,0,0.25);
+      cursor: crosshair;
+      touch-action: manipulation;
+    }
+
+    .character-box {
+      width: 175px;
+      height: 175px;
+      position: relative;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #5c2c16;
+      background: #11091c;
+      transition: transform 0.05s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Yüzünü tam ortalayan ayar */
+    .character-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 35%;
+      transform: scale(1.18);
+      pointer-events: none;
+      transition: filter 0.1s ease;
+      display: block;
+    }
+
+    .hit-flash {
+      filter: sepia(1) saturate(6) hue-rotate(-50deg) contrast(1.4) !important;
+    }
+    .shake-hard {
+      animation: rumble 0.22s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes rumble {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      20% { transform: translate(-8px, 4px) rotate(-8deg); }
+      40% { transform: translate(7px, -5px) rotate(8deg); }
+      60% { transform: translate(-6px, -3px) rotate(-5deg); }
+      80% { transform: translate(5px, 3px) rotate(4deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    /* Silahlar */
+    .weapon-title {
+      font-size: 16px;
+      color: #7a3e1d;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .weapon-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .wp-btn {
+      background: #fed391;
+      border: 3px solid #b8531e;
+      border-radius: 8px;
+      padding: 6px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+      color: #5c2c16;
+      transition: all 0.12s ease;
+    }
+    .wp-btn:hover {
+      background: #fff4d4;
+      transform: translateY(-2px);
+    }
+    .wp-btn.active {
+      background: #b8531e;
+      color: #fff4d4;
+      border-color: #5c2c16;
+      box-shadow: 0 0 8px rgba(92, 44, 22, 0.6);
+      transform: scale(1.04);
+    }
+    .wp-icon {
+      font-size: 24px;
+    }
+    .wp-name {
+      font-size: 13px;
+      line-height: 1;
+    }
+    .wp-dmg {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    /* Replik Balonu */
+    .speech-bubble {
+      background: #fff4d4;
+      border: 3px solid #b8531e;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 19px;
+      line-height: 1.3;
+      color: #4a210f;
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      box-shadow: inset 0 0 0 2px #e59952;
+    }
+
+    .floating-dmg {
+      position: absolute;
+      font-size: 26px;
+      font-weight: bold;
+      color: #d63031;
+      text-shadow: 1px 1px 0 #fff;
+      pointer-events: none;
+      animation: popFloat 0.55s ease-out forwards;
+      z-index: 20;
+    }
+    @keyframes popFloat {
+      0% { transform: translateY(0) scale(0.7); opacity: 1; }
+      100% { transform: translateY(-45px) scale(1.25); opacity: 0; }
+    }
+
+    /* Yedek Fotoğraf Değiştirici */
+    .custom-photo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .photo-btn {
+      background: #e59952;
+      border: 2px solid #b8531e;
+      color: #fff4d4;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+    }
+    #photoUpload {
+      display: none;
+    }
+
+    /* K.O. Paneli */
+    .ko-modal {
+      display: none;
+      position: absolute;
+      inset: 12px;
+      background: rgba(254, 211, 145, 0.98);
+      border: 6px solid #435e1d;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      z-index: 50;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: popModal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popModal {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .ko-title {
+      font-size: 32px;
+      color: #435e1d;
+      margin-bottom: 6px;
+    }
+    .ko-desc {
+      font-size: 19px;
+      line-height: 1.4;
+      color: #4a210f;
+      margin-bottom: 14px;
+    }
+    .restart-btn {
+      background: #435e1d;
+      border: 2px solid #283a10;
+      color: #f7ffe0;
+      font-family: 'VT323', monospace;
+      font-size: 19px;
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .footer-note {
+      font-size: 14px;
+      color: #8c4c23;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="arcade-box">
+    <div class="top-badge">🕹️ ÖZEL STRES ATMA OYUNU</div>
+    <h1>🥊 HÜSEYİN'İ PATAKLA DELUXE 🥊</h1>
+    <div class="subtitle">İçinde kalan ne varsa bu ekranda çıkar, sıfırla!</div>
+
+    <div class="hud-grid">
+      <div>HASAR: <span class="hud-val" id="totalHits">0</span></div>
+      <div>COMBO: <span class="hud-val" id="comboCount">0x</span></div>
+      <div>STRES: <span class="hud-val" id="stressMeter">100%</span></div>
+    </div>
+
+    <div class="hp-container">
+      <div class="hp-label-row">
+        <span>HÜSEYİN'İN DİRENCİ (HP)</span>
+        <span id="hpText">500 / 500</span>
+      </div>
+      <div class="hp-track">
+        <div class="hp-fill" id="hpBar"></div>
+      </div>
+    </div>
+
+    <div class="weapon-title">Vuracağın Eşyayı Seç:</div>
+    <div class="weapon-bar">
+      <div class="wp-btn active" onclick="chooseWeapon('🥊', 15, 'boks', this)">
+        <span class="wp-icon">🥊</span>
+        <span class="wp-name">Boks</span>
+        <span class="wp-dmg">-15 HP</span>
+      </div>
+      <div class="wp-btn" onclick="chooseWeapon('🩴', 25, 'terlik', this)">
+        <span class="wp-icon">🩴</span>
+        <span class="wp-name">Terlik</span>
+        <span class="wp-dmg">-25 HP</span>
+      </div>
+      <div class="wp-btn" onclick="chooseWeapon('🍳', 45, 'tava', this)">
+        <span class="wp-icon">🍳</span>
+        <span class="wp-name">Tava</span>
+        <span class="wp-dmg">-45 HP</span>
+      </div>
+      <div class="wp-btn" onclick="chooseWeapon('🐟', 70, 'balik', this)">
+        <span class="wp-icon">🐟</span>
+        <span class="wp-name">Sazan</span>
+        <span class="wp-dmg">-70 HP</span>
+      </div>
+    </div>
+
+    <!-- Arena -->
+    <div class="stage" id="stageArea" onclick="deliverHit(event)">
+      <div class="character-box" id="charBox">
+        <!-- Doğrudan ben.jpg dosyasını çeker -->
+        <img id="huseyinFace" class="character-img" src="ben.jpg" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=HuseyinM'" alt="Hüseyin">
+      </div>
+    </div>
+
+    <div class="speech-bubble" id="dialogText">
+      "Vur hatunum vur, darladığım her dakikanın hakkıdır, gıkım çıkmaz!"
+    </div>
+
+    <div class="custom-photo-row">
+      <label class="photo-btn" for="photoUpload">📷 Fotoğraf Değiştir</label>
+      <input type="file" id="photoUpload" accept="image/*" onchange="applyUserPhoto(event)">
+    </div>
+
+    <div class="footer-note">
+      Pelican Town Arcade • Hak Edenler Kulübü 🌾
+    </div>
+
+    <div class="ko-modal" id="koScreen">
+      <div style="font-size: 42px;">🏆💫</div>
+      <div class="ko-title">K.O.! TAMAMEN NAKAVT!</div>
+      <div class="ko-desc">
+        Hüseyin'in bütün direnci kırıldı, savunma modu sonsuza dek kapandı!<br>
+        Tüm stres sıfırlandı; geriye sadece Konya'da içilecek kahveler ve huzur kaldı.
+      </div>
+      <button class="restart-btn" onclick="resetBattle()">Yeniden Başlat (Biraz Daha Vur)</button>
+    </div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function triggerAudio(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'boks') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.1);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
+      } else if (type === 'terlik') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(90, now + 0.12);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'tava') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(750, now);
+        osc.frequency.exponentialRampToValueAtTime(140, now + 0.28);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.28);
+        osc.start(now);
+        osc.stop(now + 0.28);
+      } else if (type === 'balik') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.exponentialRampToValueAtTime(60, now + 0.18);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.18);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      } else if (type === 'ko') {
+        const chord = [261.6, 329.6, 392.0, 523.25];
+        chord.forEach((freq, idx) => {
+          const sOsc = audioCtx.createOscillator();
+          const sGain = audioCtx.createGain();
+          sOsc.type = 'square';
+          sOsc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          sGain.gain.setValueAtTime(0.18, now + idx * 0.1);
+          sGain.gain.linearRampToValueAtTime(0, now + idx * 0.1 + 0.2);
+          sOsc.connect(sGain);
+          sGain.connect(audioCtx.destination);
+          sOsc.start(now + idx * 0.1);
+          sOsc.stop(now + idx * 0.1 + 0.2);
+        });
+      }
+    }
+
+    let maxHp = 500;
+    let currentHp = 500;
+    let totalHitCount = 0;
+    let combo = 0;
+    let comboTimer = null;
+
+    let selectedWpIcon = '🥊';
+    let selectedWpDmg = 15;
+    let selectedWpSound = 'boks';
+
+    const punchLines = [
+      "Ah! Haklısın, darlamayacaktım!",
+      "Tava çok ağırmış balım... olsun hak ettim!",
+      "Sazanla yüzüme vurmak da ne bileyim... Ama hak ettim!",
+      "Özür dilerim valla, savunma modu sonsuza kadar kapandı!",
+      "Tamam tamam, içindeki bütün sinir boşalsın vur!",
+      "Cumartesi günü bütün kahveler benden, acı bana!",
+      "Gözümde yıldızlar uçuşuyor şu an!",
+      "Haklıydın! seni bir daha sinirlendirmeyeceğim!",
+      "Darlayan tarafım nakavt oldu bile!"
+    ];
+
+    function chooseWeapon(icon, dmg, sound, btn) {
+      selectedWpIcon = icon;
+      selectedWpDmg = dmg;
+      selectedWpSound = sound;
+      document.querySelectorAll('.wp-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function deliverHit(e) {
+      if (currentHp <= 0) return;
+
+      totalHitCount++;
+      combo++;
+      clearTimeout(comboTimer);
+      comboTimer = setTimeout(() => {
+        combo = 0;
+        document.getElementById('comboCount').innerText = '0x';
+      }, 1200);
+
+      let damageDealt = selectedWpDmg + Math.floor(combo * 1.5);
+      currentHp = Math.max(0, currentHp - damageDealt);
+
+      triggerAudio(selectedWpSound);
+
+      document.getElementById('totalHits').innerText = totalHitCount;
+      document.getElementById('comboCount').innerText = combo + 'x';
+      document.getElementById('hpText').innerText = currentHp + ' / ' + maxHp;
+      
+      let hpPercent = (currentHp / maxHp) * 100;
+      document.getElementById('hpBar').style.width = hpPercent + '%';
+
+      let stress = Math.round(hpPercent);
+      document.getElementById('stressMeter').innerText = stress + '%';
+
+      const charBox = document.getElementById('charBox');
+      const faceImg = document.getElementById('huseyinFace');
+      
+      charBox.classList.remove('shake-hard');
+      faceImg.classList.remove('hit-flash');
+      void charBox.offsetWidth;
+      charBox.classList.add('shake-hard');
+      faceImg.classList.add('hit-flash');
+      setTimeout(() => faceImg.classList.remove('hit-flash'), 120);
+
+      spawnFloatingNumber(e, damageDealt);
+
+      const quote = punchLines[Math.floor(Math.random() * punchLines.length)];
+      document.getElementById('dialogText').innerText = `"${quote}"`;
+
+      if (currentHp === 0) {
+        setTimeout(() => {
+          document.getElementById('koScreen').style.display = 'flex';
+          triggerAudio('ko');
+        }, 300);
+      }
+    }
+
+    function spawnFloatingNumber(e, dmg) {
+      const stage = document.getElementById('stageArea');
+      const floater = document.createElement('div');
+      floater.className = 'floating-dmg';
+      floater.innerText = `${selectedWpIcon} -${dmg}`;
+
+      const rect = stage.getBoundingClientRect();
+      const x = e.clientX - rect.left - 25;
+      const y = e.clientY - rect.top - 20;
+
+      floater.style.left = x + 'px';
+      floater.style.top = y + 'px';
+      stage.appendChild(floater);
+      setTimeout(() => floater.remove(), 550);
+    }
+
+    function applyUserPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('huseyinFace').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function resetBattle() {
+      currentHp = maxHp;
+      combo = 0;
+      document.getElementById('hpBar').style.width = '100%';
+      document.getElementById('hpText').innerText = maxHp + ' / ' + maxHp;
+      document.getElementById('stressMeter').innerText = '100%';
+      document.getElementById('comboCount').innerText = '0x';
+      document.getElementById('koScreen').style.display = 'none';
+      document.getElementById('dialogText').innerText = '"İkinci raund mu? Tamam aşkım, sen rahatlayana kadar buradayım!"';
+    }
+  </script>
+</body>
+</html>
